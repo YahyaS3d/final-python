@@ -25,8 +25,10 @@ pipeline {
 
     stage('Push to DockerHub') {
       steps {
+        withCredentials(blindings:[usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')])
         sh 'docker login -u $user -p $pass '
-        sh 'docker push yahyasa41/final-python:$BUILD_ID'
+        sh 'docker push yahyasa41/final-python:$BUILD_NUMBER'
+      }
       }
     }
 
