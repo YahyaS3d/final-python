@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/bin
 docker run -itd --name war-chen -p 5000:5000 chenmoskovitz/final-python-app:18
