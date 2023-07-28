@@ -17,10 +17,9 @@ pipeline {
 
     stage('Run & Test') {
       steps {
-        sh "docker run --name flask-app -d -p 5000:5000 flask-app:${env.BUILD_NUMBER}"
-        sh 'sleep 5'
-        sh 'curl http://localhost:5000/api/doc'
-        sh 'docker stop flask-app && docker rm flask-app '
+        sh 'docker run -d -p 5000:5000 flask-app:$BUILD_ID'
+        sh 'sleep 6'
+        sh 'curl localhost:5000'
       }
     }
 
