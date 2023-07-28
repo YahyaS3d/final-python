@@ -1,0 +1,3 @@
+#!/bin/bash
+docker stop war-chen
+docker rm war-chen
