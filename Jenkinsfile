@@ -1,34 +1,40 @@
 pipeline {
-  agent {
-    node {
-      label 'docker'
-    }
+    agent {
+  label 'docker'
+}
 
-  }
-  stages {
-    stage('checkout code') {
-      steps {
-        echo 'success'
-      }
-    }
+    stages {
+        stage('checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/YahyaS3d/final-python.git']])
+            }
+        }
+        stage('Build') {
+            steps {
+                sh "docker build -t flask-app:${env.BUILD_NUMBER} ."
+            }
+        }
+        stage('Run & Test') {
+            steps {
+                sh "docker run --name flask-app -d -p 5000:5000 flask-app:${env.BUILD_NUMBER}"
+                sh "sleep 5"
+                sh "curl http://localhost:5000/api/doc"
+                sh "docker stop flask-app && docker rm flask-app "
+            }
+        }
+        stage('Push to DockerHub') {
 
-    stage('Build') {
-      steps {
-        echo 'built'
-      }
-    }
 
-    stage('Test') {
-      steps {
-        echo 'tested'
-      }
-    }
+            steps {
+                withCredentials(bindings:[usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
 
-    stage('Push to DockerHub') {
-      steps {
-        echo 'pushed'
-      }
-    }
+                sh "docker tag flask-app:${env.BUILD_NUMBER} yahyasa41/flask-app:${env.BUILD_NUMBER}"
+                sh "docker login -u $user -p $pass "
+                sh "docker push yahyasa41/flask-app:${env.BUILD_NUMBER}"
+                }
+            }
 
-  }
+
+    }
+}
 }
