@@ -11,13 +11,13 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh 'docker build -t flask-app:$BUILD_ID .'
+        sh 'docker build -t yahyasa41/final-python:$BUILD_ID .'
       }
     }
 
     stage('Run & Test') {
       steps {
-        sh 'docker run -d -p 5000:5000 flask-app:$BUILD_ID'
+        sh 'docker run -d -p 5000:5000 --name yahyasa41/final-python:$BUILD_ID'
         sh 'sleep 6'
         sh 'curl localhost:5000'
       }
@@ -25,12 +25,8 @@ pipeline {
 
     stage('Push to DockerHub') {
       steps {
-        withCredentials(bindings: [usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
-          sh "docker tag flask-app:${env.BUILD_NUMBER} yahyasa41/flask-app:${env.BUILD_NUMBER}"
-          sh "docker login -u $user -p $pass "
-          sh "docker push yahyasa41/flask-app:${env.BUILD_NUMBER}"
-        }
-
+        sh 'docker login -u $user -p $pass '
+        sh 'docker push yahyasa41/final-python:$BUILD_ID'
       }
     }
 
