@@ -1,0 +1,3 @@
+#!/bin
+docker stop final-app
+docker rm final-app
